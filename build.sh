@@ -23,6 +23,7 @@ make package -j$(nproc)
 
 # export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 # modelbox-tool develop -s
+# modelbox-tool develop -s  --home /workspace/wm_project/deploy-modelbox
 
 # export LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
 # ./modelbox exec -c conf/modelbox.conf  -fV
