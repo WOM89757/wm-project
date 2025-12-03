@@ -1,0 +1,48 @@
+ARG BASE=$BASE
+FROM $BASE AS ascend-builder
+
+WORKDIR /tmp
+COPY . ./
+
+# 设置驱动路径环境变量
+ARG ASCEND_BASE=/usr/local/Ascend
+ENV LD_LIBRARY_PATH=\
+$ASCEND_BASE/driver/lib64:\
+$ASCEND_BASE/driver/lib64/common:\
+$ASCEND_BASE/driver/lib64/driver:\
+$LD_LIBRARY_PATH
+ARG CANN_PKG=Ascend-cann-toolkit_*.run
+ARG MINDXSDK_PKG=Ascend-mindxsdk-*.run
+
+# 安装开发环境所需程序
+
+RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf && \
+    yum install -y python3-pip && \
+    yum install -y shadow-utils  util-linux findutils xz hostname diffutils libxcb tzdata cronie gcc gcc-c++ git make cmake gdb vim openssl-devel libev-devel openssh-server passwd libjpeg libjpeg-devel  && \
+    ln -s /usr/lib64/libpython3.7m.so.1.0 /usr/lib64/libpython3.7m.so && \
+    mkdir ~/.pip && \
+    echo -e '[global]\nindex-url = https://mirrors.huaweicloud.com/repository/pypi/simple\ntrusted-host = mirrors.huaweicloud.com' >> ~/.pip/pip.conf && \
+    pip3 install  --ignore-installed --upgrade pip && \
+    pip3 install  cffi pyyaml pathlib2  protobuf  requests  && \
+    pip install numpy==1.24.4 decorator attrs cloudpickle psutil scipy synr==0.5.0 tornado absl-py  sympy te dataflow -i https://pypi.tuna.tsinghua.edu.cn/simple && \
+    chmod +x $CANN_PKG && \
+    ./$CANN_PKG --quiet --install --install-path=$ASCEND_BASE --install-for-all && \
+    chmod +x $MINDXSDK_PKG && \
+    source /usr/local/Ascend/ascend-toolkit/set_env.sh &&\
+    ./$MINDXSDK_PKG --quiet --install --install-path=$ASCEND_BASE && \
+    echo "source /usr/local/Ascend/ascend-toolkit/set_env.sh" >> ~/.bashrc && \
+    echo "source /usr/local/Ascend/mxVision/set_env.sh" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\"/usr/local/Ascend/driver/lib64/driver:$LD_LIBRARY_PATH\"" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\"/usr/local/Ascend/driver/lib64/common:$LD_LIBRARY_PATH\"" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\"/usr/local/Ascend/driver/lib64:$LD_LIBRARY_PATH\"" >> ~/.bashrc && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone && \
+    ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N "" && \
+    ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N "" && \
+    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N "" && \
+    echo "root" | passwd --stdin root && \
+    yum clean all && \
+    rm -rf  /tmp/* /root/.cache/
+
+
+ENTRYPOINT ["/bin/bash", "-c", "printenv > /etc/container_env && /usr/sbin/sshd && /usr/sbin/crond -n \"$@\""]
