@@ -3,3 +3,10 @@ node_modules
 package-lock.json
 deploy-modelbox
 .vscode
+model/ascend/datasets
+app/
+cpprestsdk-2.10.19
+cpprestsdk-2.10.19.tgz
+cpprestsdk-2.10.19.zip
+install
+*.run

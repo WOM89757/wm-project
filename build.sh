@@ -64,3 +64,8 @@ echo "finished build"
 # sudo ln -s /usr/local/etc/modelbox /etc/modelbox
 # sudo systemctl start modelbox-manager.service
 # sudo systemctl status modelbox.service
+
+
+# modelbox-tool template -project -name yolov5Detecter -template car_detection -path /workspace/wm-project/mb-app/
+# modelbox-tool template -flowunit -project-path /workspace/wm-project/mb-app/mnist -name mnist_infer_ascend -lang infer -virtual-type acl  -model ./model.om -input name=in1,device=ascend -output name=out1
+# modelbox-tool template -project -name PersonElecFenceInstrusion -template car_detection -path /workspace/wm-project/mb-app/PersonElecFenceInstrusion

@@ -43,7 +43,11 @@ if [ "$PLATFORM" == "ascend" ]; then
 
   # /usr/local/Ascend/FFmpeg-n4.4.4/ascend/lib/
   # export LD_LIBRARY_PATH=/usr/local/Ascend/FFmpeg-n4.4.4/ascend/lib/:$LD_LIBRARY_PATH
-  
+  # /usr/local/Ascend/FFmpeg-n4.4.4/ascend/include
+  # cmake -DFFMPEG_INCLUDE=/usr/local/Ascend/FFmpeg-n4.4.4/ascend/include  ..
+  # yum install -y mesa-libGL
+
+
   # yum install -y ffmpeg ffmpeg-devel
   # bash -c 'echo "/usr/include/ffmpeg" > /etc/ld.so.conf.d/ffmpeg-include.conf'
   # ldconfig
